@@ -1,3 +1,5 @@
+"""This package provides the Flask extension Consent and some supporting classes"""
+
 import json
 from collections import OrderedDict
 from dataclasses import dataclass
@@ -14,6 +16,8 @@ __version__ = _version
 
 @dataclass(frozen=True)
 class ConsentCategory:
+    """A "category" of consent, for example a group of cookies (or even just a single cookie) that belong together."""
+
     name: str
     title: str
     description: str
@@ -23,6 +27,7 @@ class ConsentCategory:
 
 class ConsentExtensionState:
     def __init__(self, extension, app):
+        """Used internally"""
         self.extension = extension  # type: Consent
         self.app = app  # type: Flask
 
@@ -57,6 +62,7 @@ class ConsentExtensionState:
                 read_text(__name__, 'injection.html'),
                 flask_consent_banner=render_template(
                     self.banner_template,
+                    flask_consent_contact_mail=self.contact_mail,
                     flask_consent_categories=self.extension.categories.values()),
                 flask_consent_contact_mail=self.contact_mail,
                 flask_consent_primary_domain=primary_domain,
@@ -67,11 +73,9 @@ class ConsentExtensionState:
 
 
 class ConsentData:
-    """
-    This class contains the user facing API during a request. You can access it using request.consent.
-    """
-
     def __init__(self, state: ConsentExtensionState):
+        """This class contains the user facing API during a request. You can access it using request.consent."""
+
         self._state = state
 
         data = json.loads(request.cookies.get(self._state.cookie_name, '{}'))  # type: dict
@@ -137,22 +141,22 @@ class ConsentData:
 
 
 class Consent:
-    """
-    This Flask extension handles multi-domain cookie consent.
-
-    When visiting a page we first check if we have a consent cookie for the current domain. If
-    not we send an AJAX request to `GET primary.domain/crossdomain/consent/` which returns consent
-    information for the cookies for the primary domain. If available that information is set on the
-    current domain through `POST current.domain/crossdomain/consent/`. This consent information
-    contains both the domains given consent for (all domains currently available) as well as what
-    consent was given.
-
-    If neither the current nor the primary domain contain consent information we ask the user. Upon
-    the users selection (either in the pop up or later) we send `POST <domain>/crossdomain/consent/`
-    for all domains.
-    """
-
     def __init__(self, app: Flask = None):
+        """
+        This Flask extension handles multi-domain cookie consent.
+
+        When visiting a page we first check if we have a consent cookie for the current domain. If
+        not we send an AJAX request to `GET primary.domain/crossdomain/consent/` which returns consent
+        information for the cookies for the primary domain. If available that information is set on the
+        current domain through `POST current.domain/crossdomain/consent/`. This consent information
+        contains both the domains given consent for (all domains currently available) as well as what
+        consent was given.
+
+        If neither the current nor the primary domain contain consent information we ask the user. Upon
+        the users selection (either in the pop up or later) we send `POST <domain>/crossdomain/consent/`
+        for all domains.
+        """
+
         self._categories = OrderedDict()
         self._domain_loader = lambda: []
 
@@ -263,6 +267,6 @@ class Consent:
         else:
             return render_template(
                 self.state().full_template,
-                consent_categories=self._categories.values(),
-                consent_contact_mail=self.state().contact_mail
+                flask_consent_categories=self._categories.values(),
+                flask_consent_contact_mail=self.state().contact_mail
             )
