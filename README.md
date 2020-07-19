@@ -1,5 +1,7 @@
 # Flask-Consent
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c9733d843b9c48a7a1f2cd440b8b7c4b)](https://app.codacy.com/manual/02JanDal/Flask-Consent?utm_source=github.com&utm_medium=referral&utm_content=02JanDal/Flask-Consent&utm_campaign=Badge_Grade_Dashboard)
+
 ## About
 
 Flask-Consent is a Flask extension that helps you handle user (cookie) consent in Flask projects.
