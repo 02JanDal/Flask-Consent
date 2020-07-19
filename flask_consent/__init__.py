@@ -12,10 +12,11 @@ from datetime import timedelta, datetime
 from importlib.resources import read_text
 from typing import Callable, Iterable, List, Set
 
-from flask import current_app, render_template_string, render_template, request, jsonify, Flask, make_response, Response
+from flask import current_app, render_template_string, render_template, request, jsonify, Flask, Response
 from markupsafe import Markup
 
 from .version import version as _version
+
 __version__ = _version
 
 
