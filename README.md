@@ -1,12 +1,12 @@
 # Flask-Consent
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/02JanDal/Flask-Consent/Test%20and%20publish?logo=github)
-![Codacy branch grade](https://img.shields.io/codacy/grade/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)
-![Codacy branch coverage](https://img.shields.io/codacy/coverage/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Flask-Consent?logo=python)
-![PyPI - Status](https://img.shields.io/pypi/status/Flask-Consent)
-![PyPI](https://img.shields.io/pypi/v/Flask-Consent)
-![GitHub](https://img.shields.io/github/license/02JanDal/Flask-Consent)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/02JanDal/Flask-Consent/Test%20and%20publish?logo=github)](https://github.com/02JanDal/Flask-Consent/actions)
+[![Codacy branch grade](https://img.shields.io/codacy/grade/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)](https://app.codacy.com/manual/02JanDal/Flask-Consent/dashboard)
+[![Codacy branch coverage](https://img.shields.io/codacy/coverage/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)](https://app.codacy.com/manual/02JanDal/Flask-Consent/dashboard)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Flask-Consent?logo=python)](https://pypi.org/project/Flask-Consent/)
+[![PyPI - Status](https://img.shields.io/pypi/status/Flask-Consent)](https://pypi.org/project/Flask-Consent/)
+[![PyPI](https://img.shields.io/pypi/v/Flask-Consent)](https://pypi.org/project/Flask-Consent/)
+[![License](https://img.shields.io/github/license/02JanDal/Flask-Consent)](https://github.com/02JanDal/Flask-Consent/blob/master/LICENSE)
 
 ## About
 
