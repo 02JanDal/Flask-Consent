@@ -4,20 +4,20 @@
 {% set include_banner = request.endpoint != 'flask_consent' and request.consent.is_stale() %}
 {% if include_banner %}
 <script type="text/html" id="flask_consent_banner">{{ flask_consent_banner|safe }}</script>
-{% endif %}}
+{% endif %}
 <script type="text/javascript">
 window.FlaskConsent = {}
-FlaskConsent.sendCookieConsent = function(data) {
-  if (typeof data !== 'object') {
-    data = []
-    document.querySelectorAll('input[name=flask_consent_category]').forEach(function(elem) {
-      if (elem.checked) {
-        data.push(elem.value)
-      }
-    })
-  }
-  {{ flask_consent_domains|tojson }}.forEach(function (domain) {
+FlaskConsent.sendCookieConsent = function() {
+  var data = []
+  document.querySelectorAll('input[name=flask_consent_category]').forEach(function(elem) {
+    if (elem.checked) {
+      data.push(elem.value)
+    }
+  })
+  var domains = {{ flask_consent_domains|tojson }}
+  domains.forEach(function (domain) {
     var req = new XMLHttpRequest()
+    req.withCredentials = true
     req.open('POST', location.protocol + '//' + domain + '{{ url_for("flask_consent") }}')
     req.setRequestHeader('Content-Type', 'application/json')
     req.send(JSON.stringify(data))
@@ -25,50 +25,55 @@ FlaskConsent.sendCookieConsent = function(data) {
 }
 {% if include_banner %}
 FlaskConsent.addCookieConsentBanner = function() {
-  var bannerElement = document.createElement('div');
-  bannerElement.innerHTML = document.getElementById('flask_consent_banner').innerHTML;
-  bannerElement.style.position = 'fixed';
-  bannerElement.style.bottom = '0';
-  bannerElement.style.maxWidth = '100%';
-  bannerElement.classList.add('flask-consent-banner');
-  bannerElement.classList.add('shadow-lg');
-  bannerElement.classList.add('border-top');
-  document.getElementsByTagName('body')[0].appendChild(bannerElement);
+  var bannerElement = document.createElement('div')
+  bannerElement.innerHTML = document.getElementById('flask_consent_banner').innerHTML
+  bannerElement.style.position = 'fixed'
+  bannerElement.style.bottom = '0'
+  bannerElement.style.maxWidth = '100%'
+  bannerElement.classList.add('flask-consent-banner')
+  bannerElement.classList.add('shadow-lg')
+  bannerElement.classList.add('border-top')
+  document.getElementsByTagName('body')[0].appendChild(bannerElement)
   document.getElementById('flask_consent_banner_close').addEventListener('click', function() {
-    this.sendCookieConsent();
-    bannerElement.remove();
-  });
+    FlaskConsent.sendCookieConsent()
+    bannerElement.remove()
+  })
   bannerElement.querySelectorAll('input[name=flask_consent_category]').forEach(function(el) {
-    el.addEventListener('click change keyup', this.sendCookieConsent);
-  });
+    el.addEventListener('click', FlaskConsent.sendCookieConsent)
+    el.addEventListener('change', FlaskConsent.sendCookieConsent)
+    el.addEventListener('keyup', FlaskConsent.sendCookieConsent)
+  })
 }
-{% endif %}}
+{% endif %}
 FlaskConsent.setup = function() {
   document.querySelectorAll('input[name=flask_consent_category]').forEach(function (el) {
-    el.addEventListener('click change keyup', this.sendCookieConsent);
-  });
+    el.addEventListener('click', FlaskConsent.sendCookieConsent)
+    el.addEventListener('change', FlaskConsent.sendCookieConsent)
+    el.addEventListener('keyup', FlaskConsent.sendCookieConsent)
+  })
   {% if request.consent.is_stale() %}
   {% if request.headers['Host'] == flask_consent_primary_domain and request.endpoint != 'flask_consent' %}
     {# If we're on the "primary" domain we don't need to fetch information from _ourselves_ #}
-    this.addCookieConsentBanner()
+    FlaskConsent.addCookieConsentBanner()
   {% else %}
-    var req = new XMLHttpRequest();
+    var req = new XMLHttpRequest()
+    req.withCredentials = true
     req.onload = function () {
-      var enabled = JSON.parse(req.responseText).enabled;
+      var enabled = JSON.parse(req.responseText).enabled
       if (enabled && enabled.length > 0) {
-        this.sendCookieConsent(enabled);
-        location.reload();
+        FlaskConsent.sendCookieConsent(enabled)
+        location.reload()
       } else {
         {% if request.endpoint != 'flask_consent' %}
-          this.addCookieConsentBanner();
+          FlaskConsent.addCookieConsentBanner()
         {% endif %}
       }
-    };
-    req.open('GET', location.protocol + '//' + '{{ flask_consent_primary_domain }}' + '{{ url_for('flask_consent') }}');
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send();
     }
+    req.open('GET', location.protocol + '//' + '{{ flask_consent_primary_domain }}' + '{{ url_for('flask_consent') }}')
+    req.setRequestHeader('Content-Type', 'application/json')
+    req.send()
   {% endif %}
   {% endif %}
 }
+document.addEventListener('DOMContentLoaded', FlaskConsent.setup)
 </script>

@@ -12,7 +12,7 @@ from datetime import timedelta, datetime
 from importlib.resources import read_text
 from typing import Callable, Iterable, List, Set
 
-from flask import current_app, render_template_string, render_template, request, jsonify, Flask
+from flask import current_app, render_template_string, render_template, request, jsonify, Flask, make_response, Response
 from markupsafe import Markup
 
 from .version import version as _version
@@ -65,7 +65,7 @@ class ConsentExtensionState:
         if request.endpoint == 'flask_consent' or request.consent.is_stale():
             return Markup(render_template_string(
                 read_text(__name__, 'injection.html'),
-                flask_consent_banner=render_template(
+                flask_consent_banner=self.extension._render_template_func(
                     self.banner_template,
                     flask_consent_contact_mail=self.contact_mail,
                     flask_consent_categories=self.extension.categories.values()),
@@ -104,6 +104,7 @@ class ConsentData:
                                     enabled=list(self._enabled),
                                     last_updated=self._last_updated.isoformat()
                                 )),
+                                samesite='None',
                                 max_age=int(self._state.valid_for.days * 24 * 60 * 60))
 
     @property
@@ -165,6 +166,7 @@ class Consent:
 
         self._categories = OrderedDict()
         self._domain_loader = lambda: []
+        self._render_template_func = render_template
 
         self.app = app
         if self.app:
@@ -181,7 +183,20 @@ class Consent:
         """
         Returns the list of valid domain names
         """
-        return list(self._domain_loader())
+        result = list(self._domain_loader())
+        if current_app.debug:
+            host_domain = request.headers['Host'].split('/')[-1].split(':')[0]
+            if host_domain == 'localhost':
+                result.append(request.headers['Host'])
+        return result
+
+    def set_render_template_func(self, f):
+        """
+        Overrides the template rendering function used (normally flask.render_template).
+
+        Can be used to support themes or similar.
+        """
+        self._render_template_func = f
 
     def init_app(self, app: Flask):
         app.config.setdefault('CONSENT_FULL_TEMPLATE', None)
@@ -259,19 +274,26 @@ class Consent:
 
     def _handle_consent_route(self):
         if request.content_type == 'application/json':
+            def respond(status_code, **kwargs):
+                response: Response = jsonify(**kwargs)
+                response.status_code = status_code
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+                return response
+
             if request.method == 'POST':
                 new = request.json
                 if not isinstance(new, list):
-                    return jsonify(msg='payload is not a list'), 400
+                    return respond(400, msg='payload is not a list')
                 for cat in new:
                     if cat not in self._categories:
-                        return jsonify(msg='invalid consent category specified: ' + cat), 400
+                        return respond(400, msg='invalid consent category specified: ' + cat)
                 for cat in self._categories.keys():
                     request.consent[cat] = cat in new
-            return jsonify(enabled=list(request.consent.enabled),
+            return respond(200,
+                           enabled=list(request.consent.enabled),
                            last_updated=request.consent.last_updated.isoformat())
         else:
-            return render_template(
+            return self._render_template_func(
                 self.state().full_template,
                 flask_consent_categories=self._categories.values(),
                 flask_consent_contact_mail=self.state().contact_mail
