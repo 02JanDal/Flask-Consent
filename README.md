@@ -1,5 +1,13 @@
 # Flask-Consent
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/02JanDal/Flask-Consent/Test%20and%20publish?logo=github)
+![Codacy branch grade](https://img.shields.io/codacy/grade/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)
+![Codacy branch coverage](https://img.shields.io/codacy/coverage/3d5d817d453b46eebbec3b217801fc7d/master?logo=codacy)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Flask-Consent?logo=python)
+![PyPI - Status](https://img.shields.io/pypi/status/Flask-Consent)
+![PyPI](https://img.shields.io/pypi/v/Flask-Consent)
+![GitHub](https://img.shields.io/github/license/02JanDal/Flask-Consent)
+
 ## About
 
 Flask-Consent is a Flask extension that helps you handle user (cookie) consent in Flask projects.
