@@ -8,7 +8,8 @@ from typing import Callable, Iterable, List, Set
 from flask import current_app, render_template_string, render_template, request, jsonify, Flask
 from markupsafe import Markup
 
-from .version import version as __version__
+from .version import version as _version
+__version__ = _version
 
 
 @dataclass(frozen=True)
