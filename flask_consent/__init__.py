@@ -1,4 +1,4 @@
-"""This package provides the Flask extension Consent and some supporting classes"""
+"""This package provides the Flask extension Consent and some supporting classes."""
 
 import json
 from collections import OrderedDict
@@ -27,7 +27,7 @@ class ConsentCategory:
 
 class ConsentExtensionState:
     def __init__(self, extension, app):
-        """Used internally"""
+        """Used internally."""
         self.extension = extension  # type: Consent
         self.app = app  # type: Flask
 
@@ -111,7 +111,8 @@ class ConsentData:
 
     def __getitem__(self, key: (ConsentCategory, str)) -> bool:
         """
-        Lookup if the given consent category is enabled
+        Lookup if the given consent category is enabled.
+
         :param key: The consent category, either as a ConsentCategory object or the name as a string
         :return: True if enabled, False if not
         """

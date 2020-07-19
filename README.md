@@ -97,6 +97,6 @@ Somewhere in the template you will usually be adding a set of checkboxes:
 
 ## Development and Testing
 
-1. Get the code: `git clone https://github.com/02JanDal/Flask-Consent.git`
-2. Do your changes
-3. Test the result: `tox -e py`
+1.  Get the code: `git clone https://github.com/02JanDal/Flask-Consent.git`
+2.  Do your changes
+3.  Test the result: `tox -e py`
