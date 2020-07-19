@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of Flask-Consent
+# Copyright (C) 2020 Jan Dalheimer
+
 """This package provides the Flask extension Consent and some supporting classes."""
 
 import json

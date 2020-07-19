@@ -1,3 +1,6 @@
+{# This file is part of Flask-Consent #}
+{# Copyright (C) 2020 Jan Dalheimer   #}
+
 {% set include_banner = request.endpoint != 'flask_consent' and request.consent.is_stale() %}
 {% if include_banner %}
 <script type="text/html" id="flask_consent_banner">{{ flask_consent_banner|safe }}</script>

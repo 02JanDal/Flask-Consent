@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of Flask-Consent
+# Copyright (C) 2020 Jan Dalheimer
+
 import unittest
 
 from flask import Flask, jsonify, request, render_template_string
