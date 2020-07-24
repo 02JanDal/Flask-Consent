@@ -89,7 +89,10 @@ class ConsentData:
             self._last_updated = datetime.fromisoformat(data['last_updated'])
         except (ValueError, KeyError):
             self._last_updated = datetime.utcnow()
-        self._enabled = set(data['enabled']) if 'enabled' in data and isinstance(data['enabled'], list) else set()
+        if self._state.cookie_name not in request.cookies or 'enabled' not in data:
+            self._enabled = {c.name for c in self._state.extension.categories.values() if c.default}
+        else:
+            self._enabled = set(data['enabled']) if isinstance(data['enabled'], list) else set()
         self._dirty = False
 
     def is_stale(self):

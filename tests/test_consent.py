@@ -45,13 +45,13 @@ class WebTest(TestCase):
         app, _ = make_app_and_consent()
         return app
 
-    def test_first_visit_disables_all(self):
+    def test_first_visit_uses_default(self):
         resp = self.client.get('/')
         self.assert200(resp)
         self.assertDictEqual(resp.json, dict(
-            required=False,
-            preferences=False,
-            analytics=False
+            required=True,
+            preferences=True,
+            analytics=True
         ))
 
     def test_first_visit_includes_banner(self):
@@ -152,11 +152,11 @@ class BasicTest(unittest.TestCase):
 
         with app.test_request_context():
             data = ConsentData(consent.state())
-            self.assertIs(data['required'], False)
-            data['required'] = True
-            self.assertIs(data['required'], True)
+            self.assertIs(data['analytics'], True)
+            data['analytics'] = False
+            self.assertIs(data['analytics'], False)
 
             preferences_category = consent.categories['preferences']
-            self.assertIs(data[preferences_category], False)
-            data[preferences_category] = True
             self.assertIs(data[preferences_category], True)
+            data[preferences_category] = False
+            self.assertIs(data[preferences_category], False)
