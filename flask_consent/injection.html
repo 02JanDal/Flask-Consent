@@ -15,13 +15,14 @@ FlaskConsent.sendCookieConsent = function() {
     }
   })
   var domains = {{ flask_consent_domains|tojson }}
+  var port = location.port ? (':' + location.port) : ''
   domains.forEach(function (domain) {
     var req = new XMLHttpRequest()
     req.withCredentials = true
-    req.open('POST', location.protocol + '//' + domain + '{{ url_for("flask_consent") }}')
+    req.open('POST', location.protocol + '//' + domain + port + '{{ url_for("flask_consent") }}')
     req.setRequestHeader('Content-Type', 'application/json')
     req.send(JSON.stringify(data))
-  });
+  })
 }
 {% if include_banner %}
 FlaskConsent.addCookieConsentBanner = function() {

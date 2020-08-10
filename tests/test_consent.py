@@ -17,6 +17,7 @@ def make_app_and_consent():
     app.config['CONSENT_FULL_TEMPLATE'] = 'full.html'
     app.config['CONSENT_BANNER_TEMPLATE'] = 'banner.html'
     app.config['CONSENT_CONTACT_MAIL'] = 'test@test.test'
+    app.config['CONSENT_PRIMARY_SERVERNAME'] = 'primary.test'
     consent = Consent(app)
     consent.add_standard_categories()
 
@@ -117,7 +118,6 @@ class WebTest(TestCase):
 class MultiDomainTest(TestCase):
     def create_app(self):
         app, consent = make_app_and_consent()
-        app.config['CONSENT_PRIMARY_SERVERNAME'] = 'primary.test'
 
         @consent.domain_loader
         def domain_loader():

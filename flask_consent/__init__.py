@@ -59,10 +59,12 @@ class ConsentExtensionState:
 
     @property
     def primary_servername(self):
-        return self.app.config['CONSENT_PRIMARY_SERVERNAME']
+        val = self.app.config.get('CONSENT_PRIMARY_SERVERNAME', self.app.config.get('SERVER_NAME'))
+        assert val, 'you need to set CONSENT_PRIMARY_SERVERNAME or SERVER_NAME'
+        return val
 
     def html(self):
-        primary_domain = self.primary_servername
+        primary_domain = self.primary_servername.split(':')[0]
         if request.endpoint == 'flask_consent' or request.consent.is_stale():
             return Markup(render_template_string(
                 read_text(__name__, 'injection.html'),
@@ -108,6 +110,7 @@ class ConsentData:
                                     enabled=list(self._enabled),
                                     last_updated=self._last_updated.isoformat()
                                 )),
+                                secure=not current_app.debug and not current_app.testing,
                                 samesite='None',
                                 max_age=int(self._state.valid_for.days * 24 * 60 * 60))
 
